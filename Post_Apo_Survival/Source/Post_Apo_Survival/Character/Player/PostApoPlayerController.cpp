@@ -10,6 +10,10 @@
 
 #include "Kismet/KismetMathLibrary.h"
 
+#include "System/PostApoAssetManager.h"
+#include "Data/PostApoInputData.h"
+#include "System/PostApoGamePlayTags.h"
+
 #include "Engine/Engine.h"
 
 APostApoPlayerController::APostApoPlayerController(const FObjectInitializer& objectInitializer)
@@ -22,23 +26,52 @@ void APostApoPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (InputSystem) {
-		if (InputMappingContext) {
-			InputSystem->AddMappingContext(InputMappingContext, 0);
-		}
+	const TObjectPtr<UPostApoInputData> InputData = UPostApoAssetManager::GetAssetByName<UPostApoInputData>("InputData");
+	if (!InputData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't retrieve UPostApoInputData instance"));
+		return;
 	}
+
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+
+	if (!SubSystem) {
+		UE_LOG(LogTemp, Error, TEXT("Can't retrieve UEnhancedInputLocalPlayerSubsystem instance"));
+		return;
+	}
+	SubSystem->AddMappingContext(InputData->InputMappingContext, 0);
 }
 
 void APostApoPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent) {
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
-		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
+	const TObjectPtr<UPostApoInputData> InputData = UPostApoAssetManager::GetAssetByName<UPostApoInputData>("InputData");
+	if (!InputData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't retrieve UPostApoInputData instance"));
+		return;
 	}
+
+	TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+
+	const UInputAction* Action1 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Move);
+	EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
+
+	const UInputAction* Action2 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Turn);
+	EnhancedInputComponent->BindAction(Action2, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
+
+	const UInputAction* Action3 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Run);
+	EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Triggered, this, &ThisClass::InputRun);
+
+	const UInputAction* Action4 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Attack);
+	EnhancedInputComponent->BindAction(Action4, ETriggerEvent::Triggered, this, &ThisClass::InputAttack);
+
+	const UInputAction* Action5 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Zoom);
+	EnhancedInputComponent->BindAction(Action5, ETriggerEvent::Started, this, &ThisClass::InputZoom);
+
+	const UInputAction* Action6 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Jump);
+	EnhancedInputComponent->BindAction(Action6, ETriggerEvent::Started, this, &ThisClass::InputJump);
 }
 
 void APostApoPlayerController::InputMove(const FInputActionValue& inputValue)
@@ -75,5 +108,37 @@ void APostApoPlayerController::InputTurn(const FInputActionValue& inputvalue)
 
 	if (TurnVector.Y != 0.0) {
 		AddPitchInput(TurnVector.Y);
+	}
+}
+
+void APostApoPlayerController::InputRun(const FInputActionValue& inputvalue)
+{
+	if (GEngine) {
+		FString DebugMessage = FString::Printf(TEXT("InputRun triggered"));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
+	}
+}
+
+void APostApoPlayerController::InputAttack(const FInputActionValue& inputvalue)
+{
+	if (GEngine) {
+		FString DebugMessage = FString::Printf(TEXT("InputAttack triggered."));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
+	}
+}
+
+void APostApoPlayerController::InputZoom(const FInputActionValue& inputvalue)
+{
+	if (GEngine) {
+		FString DebugMessage = FString::Printf(TEXT("InputZoom triggered."));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
+	}
+}
+
+void APostApoPlayerController::InputJump(const FInputActionValue& inputvalue)
+{
+	if (GEngine) {
+		FString DebugMessage = FString::Printf(TEXT("InputJump triggered."));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
 	}
 }

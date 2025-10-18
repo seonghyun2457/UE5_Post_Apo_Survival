@@ -28,14 +28,11 @@ protected:
 private:
 	void InputMove(const FInputActionValue& inputValue);
 	void InputTurn(const FInputActionValue& inputvalue);
+	void InputRun(const FInputActionValue& inputvalue);
+	void InputAttack(const FInputActionValue& inputvalue);
+	void InputZoom(const FInputActionValue& inputvalue);
+	void InputJump(const FInputActionValue& inputvalue);
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	TObjectPtr<UInputMappingContext> InputMappingContext;
 
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	TObjectPtr<UInputAction> MoveAction;
-
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	TObjectPtr<UInputAction> TurnAction;
 };
