@@ -100,14 +100,51 @@ void UPostApoAssetManager::LoadSyncByLabel(const FName& iLabel)
 	}
 }
 
-void UPostApoAssetManager::LoadAsyncByPath(const FSoftObjectPath& AssetPath, FAsyncLoadCompletedDelegate CompletedDelegate)
+void UPostApoAssetManager::LoadAsyncByPath(const FSoftObjectPath& iAssetPath, FAsyncLoadCompletedDelegate CompletedDelegate)
 {
+	if (!UAssetManager::IsInitialized())
+	{
+		UE_LOG(LogTemp, Error, TEXT("AssetManager must be initialized"));
+		return;
+	}
 
+	if (iAssetPath.IsValid())
+	{
+		if (UObject* LoadedAsset = iAssetPath.ResolveObject())
+		{
+			Get().AddLoadedAsset(iAssetPath.GetAssetFName(), LoadedAsset);
+		}
+		else
+		{
+			TArray<FSoftObjectPath> AssetPaths;
+			AssetPaths.Add(iAssetPath);
+
+			TSharedPtr<FStreamableHandle> Handle = GetStreamableManager().RequestAsyncLoad(AssetPaths);
+
+			Handle->BindCompleteDelegate(FStreamableDelegate::CreateLambda([AssetName = iAssetPath.GetAssetFName(), iAssetPath, CompleteDelegate = MoveTemp(CompletedDelegate)]()
+				{
+					UObject* LoadedAsset = iAssetPath.ResolveObject();
+					Get().AddLoadedAsset(AssetName, LoadedAsset);
+					if (CompleteDelegate.IsBound())
+						CompleteDelegate.Execute(AssetName, LoadedAsset);
+				}));
+		}
+	}
 }
 
-void UPostApoAssetManager::LoadAsyncByName(const FName& AssetName, FAsyncLoadCompletedDelegate CompletedDelegate)
+void UPostApoAssetManager::LoadAsyncByName(const FName& iAssetName, FAsyncLoadCompletedDelegate CompletedDelegate)
 {
+	if (!UAssetManager::IsInitialized())
+	{
+		UE_LOG(LogTemp, Error, TEXT("AssetManager must be initialized"));
+		return;
+	}
 
+	TObjectPtr<UPostApoPrimaryAssetData> AssetData = Get().LoadedAssetData;
+	check(AssetData);
+
+	const FSoftObjectPath& AssetPath = AssetData->GetAssetPathByName(iAssetName);
+	LoadAsyncByPath(AssetPath, CompletedDelegate);
 }
 
 void UPostApoAssetManager::ReleaseByPath(const FSoftObjectPath& iAssetPath)

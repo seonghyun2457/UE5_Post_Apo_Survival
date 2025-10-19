@@ -34,8 +34,8 @@ public:
 	static void LoadSyncByName(const FName& iAssetName);
 	static void LoadSyncByLabel(const FName& iLabel);
 
-	static void LoadAsyncByPath(const FSoftObjectPath& AssetPath, FAsyncLoadCompletedDelegate CompletedDelegate = FAsyncLoadCompletedDelegate());
-	static void LoadAsyncByName(const FName& AssetName, FAsyncLoadCompletedDelegate CompletedDelegate = FAsyncLoadCompletedDelegate());
+	static void LoadAsyncByPath(const FSoftObjectPath& iAssetPath, FAsyncLoadCompletedDelegate CompletedDelegate = FAsyncLoadCompletedDelegate());
+	static void LoadAsyncByName(const FName& iAssetName, FAsyncLoadCompletedDelegate CompletedDelegate = FAsyncLoadCompletedDelegate());
 
 	static void ReleaseByPath(const FSoftObjectPath& iAssetPath);
 	static void ReleaseByName(const FName& iAssetName);
