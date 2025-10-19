@@ -148,4 +148,13 @@ void APostApoPlayerController::InputJump(const FInputActionValue& inputvalue)
 		FString DebugMessage = FString::Printf(TEXT("InputJump triggered."));
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
 	}
+
+	TObjectPtr<APostApoPlayerCharacter> PlayerCharacter = Cast<APostApoPlayerCharacter>(GetPawn());
+	if (!PlayerCharacter)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController doesn't possess any pawn"));
+		return;
+	}
+
+	PlayerCharacter->Jump();
 }
