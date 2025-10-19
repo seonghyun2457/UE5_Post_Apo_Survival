@@ -2,17 +2,24 @@
 
 
 #include "Character/Player/PostApoPlayerController.h"
+
+// InputMapping
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
-#include "Kismet/KismetMathLibrary.h"
-
+// Data Asset
 #include "System/PostApoAssetManager.h"
 #include "Data/PostApoInputData.h"
 #include "System/PostApoGamePlayTags.h"
+
+// Math Library
+#include "Kismet/KismetMathLibrary.h"
+
+// PlayerCharacter
+#include "PostApoPlayerCharacter.h"
 
 #include "Engine/Engine.h"
 
@@ -107,7 +114,7 @@ void APostApoPlayerController::InputTurn(const FInputActionValue& inputvalue)
 	}
 
 	if (TurnVector.Y != 0.0) {
-		AddPitchInput(TurnVector.Y);
+		AddPitchInput(-TurnVector.Y);
 	}
 }
 
