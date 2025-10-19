@@ -9,6 +9,7 @@
 class UInputMappingContext;
 struct FInputActionValue;
 class UInputAction;
+class APostApoPlayerCharacter;
 
 /**
  * 
@@ -33,6 +34,7 @@ private:
 	void InputZoom(const FInputActionValue& inputvalue);
 	void InputJump(const FInputActionValue& inputvalue);
 
-protected:
-
+private:
+	UPROPERTY()
+	TObjectPtr<APostApoPlayerCharacter> PlayerCharacter;
 };

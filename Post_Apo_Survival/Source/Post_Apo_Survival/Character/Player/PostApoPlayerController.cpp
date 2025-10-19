@@ -33,34 +33,41 @@ void APostApoPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const TObjectPtr<UPostApoInputData> InputData = UPostApoAssetManager::GetAssetByName<UPostApoInputData>("InputData");
+	const UPostApoInputData* InputData = UPostApoAssetManager::GetAssetByName<UPostApoInputData>("InputData");
 	if (!InputData)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Can't retrieve UPostApoInputData instance"));
 		return;
 	}
 
-	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 
 	if (!SubSystem) {
 		UE_LOG(LogTemp, Error, TEXT("Can't retrieve UEnhancedInputLocalPlayerSubsystem instance"));
 		return;
 	}
 	SubSystem->AddMappingContext(InputData->InputMappingContext, 0);
+
+	PlayerCharacter = Cast<APostApoPlayerCharacter>(GetPawn());
+	if (!PlayerCharacter)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController doesn't possess any pawn"));
+		return;
+	}
 }
 
 void APostApoPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	const TObjectPtr<UPostApoInputData> InputData = UPostApoAssetManager::GetAssetByName<UPostApoInputData>("InputData");
+	const UPostApoInputData* InputData = UPostApoAssetManager::GetAssetByName<UPostApoInputData>("InputData");
 	if (!InputData)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Can't retrieve UPostApoInputData instance"));
 		return;
 	}
 
-	TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 
 	const UInputAction* Action1 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Move);
 	EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
@@ -148,13 +155,6 @@ void APostApoPlayerController::InputJump(const FInputActionValue& inputvalue)
 		FString DebugMessage = FString::Printf(TEXT("InputJump triggered."));
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
 	}
-
-	TObjectPtr<APostApoPlayerCharacter> PlayerCharacter = Cast<APostApoPlayerCharacter>(GetPawn());
-	if (!PlayerCharacter)
-	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController doesn't possess any pawn"));
-		return;
-	}
-
+	
 	PlayerCharacter->Jump();
 }

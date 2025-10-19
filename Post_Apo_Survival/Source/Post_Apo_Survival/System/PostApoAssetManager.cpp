@@ -24,7 +24,7 @@ void UPostApoAssetManager::LoadSyncByPath(const FSoftObjectPath& iAssetPath)
 {
 	if (iAssetPath.IsValid())
 	{
-		TObjectPtr<UObject> LoadedAsset = iAssetPath.ResolveObject();
+		UObject* LoadedAsset = iAssetPath.ResolveObject();
 		if (!LoadedAsset)
 		{
 			if (UAssetManager::IsInitialized())
@@ -50,7 +50,7 @@ void UPostApoAssetManager::LoadSyncByPath(const FSoftObjectPath& iAssetPath)
 
 void UPostApoAssetManager::LoadSyncByName(const FName& iAssetName)
 {
-	TObjectPtr<UPostApoPrimaryAssetData> AssetData = Get().LoadedAssetData;
+	UPostApoPrimaryAssetData* AssetData = Get().LoadedAssetData;
 	check(AssetData);
 
 	const FSoftObjectPath& AssetPath = AssetData->GetAssetPathByName(iAssetName);
@@ -65,7 +65,7 @@ void UPostApoAssetManager::LoadSyncByLabel(const FName& iLabel)
 		return;
 	}
 
-	TObjectPtr<UPostApoPrimaryAssetData> AssetData = Get().LoadedAssetData;
+	UPostApoPrimaryAssetData* AssetData = Get().LoadedAssetData;
 	check(AssetData);
 
 	TArray<FSoftObjectPath> AssetPaths;
@@ -140,7 +140,7 @@ void UPostApoAssetManager::LoadAsyncByName(const FName& iAssetName, FAsyncLoadCo
 		return;
 	}
 
-	TObjectPtr<UPostApoPrimaryAssetData> AssetData = Get().LoadedAssetData;
+	UPostApoPrimaryAssetData* AssetData = Get().LoadedAssetData;
 	check(AssetData);
 
 	const FSoftObjectPath& AssetPath = AssetData->GetAssetPathByName(iAssetName);
@@ -169,7 +169,7 @@ void UPostApoAssetManager::ReleaseByName(const FName& iAssetName)
 void UPostApoAssetManager::ReleaseByLabel(const FName& iLabel)
 {
 	UPostApoAssetManager& AssetManager = Get();
-	TObjectPtr<UPostApoPrimaryAssetData> LoadedAssetData = AssetManager.LoadedAssetData;
+	UPostApoPrimaryAssetData* LoadedAssetData = AssetManager.LoadedAssetData;
 	const FPostApoAssetSet& AssetSet = LoadedAssetData->GetAssetSetByLabel(iLabel);
 
 	for (const FPostApoAssetEntry& AssetEntry : AssetSet.AssetEntries)
@@ -198,7 +198,7 @@ void UPostApoAssetManager::LoadPreloadAssets()
 		return;
 	}
 
-	TObjectPtr<UPostApoPrimaryAssetData> AssetData = nullptr;
+	UPostApoPrimaryAssetData* AssetData = nullptr;
 	FPrimaryAssetType PrimaryAssetType(UPostApoPrimaryAssetData::StaticClass()->GetFName());
 	TSharedPtr<FStreamableHandle> Handle = LoadPrimaryAssetsWithType(PrimaryAssetType);
 	if (Handle.IsValid())
