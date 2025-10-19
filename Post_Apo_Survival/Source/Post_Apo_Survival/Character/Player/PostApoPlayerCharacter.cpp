@@ -9,7 +9,7 @@ APostApoPlayerCharacter::APostApoPlayerCharacter(const FObjectInitializer& objec
 	: Super(objectInitializer)
 {
 	// Set Skeletal Mesh
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Megan/Meshes/Megan.Megan'"));
 	if (!SkeletalMeshFinder.Succeeded()) {
 		UE_LOG(LogTemp, Warning, TEXT("Failed to find skeletal mesh for player character."))
 	}
