@@ -33,3 +33,13 @@ APostApoPlayerCharacter::APostApoPlayerCharacter(const FObjectInitializer& objec
 	bUseControllerRotationYaw = true;
 	//bUseControllerRotationPitch = true;
 }
+
+void APostApoPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void APostApoPlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
