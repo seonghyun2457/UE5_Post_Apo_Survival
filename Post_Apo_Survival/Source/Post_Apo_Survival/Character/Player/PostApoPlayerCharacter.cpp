@@ -4,6 +4,7 @@
 #include "Character/Player/PostApoPlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 APostApoPlayerCharacter::APostApoPlayerCharacter(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -19,7 +20,7 @@ APostApoPlayerCharacter::APostApoPlayerCharacter(const FObjectInitializer& objec
 	// Set SpringArm
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(GetRootComponent());
-	SpringArm->TargetArmLength = 700.f;
+	SpringArm->TargetArmLength = 250.f;
 	SpringArm->SetRelativeRotation(FRotator(-20.f, 0.f, 0.f));
 
 	// Use PawnControlRoation
@@ -29,9 +30,25 @@ APostApoPlayerCharacter::APostApoPlayerCharacter(const FObjectInitializer& objec
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	// Set Orient Rotation To Movement to true
+	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
+	if (!CharacterMovementComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Player character doesn't have character component."));
+		return;
+	}
+
+	CharacterMovementComponent->bOrientRotationToMovement = true;
+
 	// Set Controller Rotations
-	bUseControllerRotationYaw = true;
-	//bUseControllerRotationPitch = true;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+
+	// Set Walk/Run Speed
+	RunSpeed = 600.f;
+	WalkSpeed = 300.f;
+	CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
 }
 
 void APostApoPlayerCharacter::BeginPlay()
@@ -42,4 +59,14 @@ void APostApoPlayerCharacter::BeginPlay()
 void APostApoPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+const float APostApoPlayerCharacter::GetRunSpeed() const
+{
+	return RunSpeed;
+}
+
+const float APostApoPlayerCharacter::GetWalkSpeed() const
+{
+	return WalkSpeed;
 }

@@ -27,10 +27,22 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+
+public:
+	const float GetRunSpeed() const;
+	const float GetWalkSpeed() const;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCameraComponent> Camera;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	float RunSpeed;
+
+	UPROPERTY(VisibleAnywhere)
+	float WalkSpeed;
 };

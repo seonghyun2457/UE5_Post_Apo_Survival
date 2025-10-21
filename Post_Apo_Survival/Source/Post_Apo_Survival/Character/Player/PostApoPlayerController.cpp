@@ -20,6 +20,7 @@
 
 // PlayerCharacter
 #include "PostApoPlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Engine/Engine.h"
 
@@ -51,7 +52,14 @@ void APostApoPlayerController::BeginPlay()
 	PlayerCharacter = Cast<APostApoPlayerCharacter>(GetPawn());
 	if (!PlayerCharacter)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController doesn't possess any pawn"));
+		UE_LOG(LogTemp, Error, TEXT("Player controller doesn't possess any pawn."));
+		return;
+	}
+
+	CharacterMovementComponent = PlayerCharacter->GetCharacterMovement();
+	if (!CharacterMovementComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Player character doesn't have character component."));
 		return;
 	}
 }
@@ -69,20 +77,29 @@ void APostApoPlayerController::SetupInputComponent()
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 
+
 	const UInputAction* Action1 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Move);
 	EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
+
 
 	const UInputAction* Action2 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Turn);
 	EnhancedInputComponent->BindAction(Action2, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
 
+
 	const UInputAction* Action3 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Run);
-	EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Triggered, this, &ThisClass::InputRun);
+	EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Started, this, &ThisClass::InputRun);
+	EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Completed, this, &ThisClass::InputRun);
+	EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Completed, this, &ThisClass::InputRun);
+
+
 
 	const UInputAction* Action4 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Attack);
 	EnhancedInputComponent->BindAction(Action4, ETriggerEvent::Triggered, this, &ThisClass::InputAttack);
 
+
 	const UInputAction* Action5 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Zoom);
 	EnhancedInputComponent->BindAction(Action5, ETriggerEvent::Started, this, &ThisClass::InputZoom);
+
 
 	const UInputAction* Action6 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Jump);
 	EnhancedInputComponent->BindAction(Action6, ETriggerEvent::Started, this, &ThisClass::InputJump);
@@ -130,6 +147,16 @@ void APostApoPlayerController::InputRun(const FInputActionValue& inputvalue)
 	if (GEngine) {
 		FString DebugMessage = FString::Printf(TEXT("InputRun triggered"));
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
+	}
+
+	bool bRun = inputvalue.Get<bool>();
+	if (bRun)
+	{
+		CharacterMovementComponent->MaxWalkSpeed = PlayerCharacter->GetRunSpeed();
+	}
+	else
+	{
+		CharacterMovementComponent->MaxWalkSpeed = PlayerCharacter->GetWalkSpeed();
 	}
 }
 

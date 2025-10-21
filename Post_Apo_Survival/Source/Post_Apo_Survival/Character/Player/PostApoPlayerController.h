@@ -10,6 +10,7 @@ class UInputMappingContext;
 struct FInputActionValue;
 class UInputAction;
 class APostApoPlayerCharacter;
+class UCharacterMovementComponent;
 
 /**
  * 
@@ -35,6 +36,9 @@ private:
 	void InputJump(const FInputActionValue& inputvalue);
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Character")
 	TObjectPtr<APostApoPlayerCharacter> PlayerCharacter;
+
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 };
