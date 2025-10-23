@@ -49,6 +49,9 @@ APostApoPlayerCharacter::APostApoPlayerCharacter(const FObjectInitializer& objec
 	RunSpeed = 600.f;
 	WalkSpeed = 300.f;
 	CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
+
+	// Set Character Max Acceleration
+	CharacterMovementComponent->MaxAcceleration = 1000.f;
 }
 
 void APostApoPlayerCharacter::BeginPlay()

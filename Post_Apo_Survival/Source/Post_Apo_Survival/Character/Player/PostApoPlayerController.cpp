@@ -103,6 +103,7 @@ void APostApoPlayerController::SetupInputComponent()
 
 	const UInputAction* Action6 = InputData->FindInputActionByTag(PostApoGameplayTags::Input_Action_Jump);
 	EnhancedInputComponent->BindAction(Action6, ETriggerEvent::Started, this, &ThisClass::InputJump);
+	EnhancedInputComponent->BindAction(Action6, ETriggerEvent::Completed, this, &ThisClass::InputStopJumping);
 }
 
 void APostApoPlayerController::InputMove(const FInputActionValue& inputValue)
@@ -150,6 +151,7 @@ void APostApoPlayerController::InputRun(const FInputActionValue& inputvalue)
 	}
 
 	bool bRun = inputvalue.Get<bool>();
+
 	if (bRun)
 	{
 		CharacterMovementComponent->MaxWalkSpeed = PlayerCharacter->GetRunSpeed();
@@ -182,6 +184,26 @@ void APostApoPlayerController::InputJump(const FInputActionValue& inputvalue)
 		FString DebugMessage = FString::Printf(TEXT("InputJump triggered."));
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
 	}
-	
-	PlayerCharacter->Jump();
+
+	bool bJump = inputvalue.Get<bool>();
+
+	if (bJump)
+	{
+		PlayerCharacter->Jump();
+	}
+}
+
+void APostApoPlayerController::InputStopJumping(const FInputActionValue& inputvalue)
+{
+	if (GEngine) {
+		FString DebugMessage = FString::Printf(TEXT("InputStopJumping triggered."));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, DebugMessage);
+	}
+
+	bool bStopJumping = inputvalue.Get<bool>();
+
+	if (bStopJumping)
+	{
+		PlayerCharacter->StopJumping();
+	}
 }

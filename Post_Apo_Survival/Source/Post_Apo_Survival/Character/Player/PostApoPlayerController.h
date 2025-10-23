@@ -34,6 +34,7 @@ private:
 	void InputAttack(const FInputActionValue& inputvalue);
 	void InputZoom(const FInputActionValue& inputvalue);
 	void InputJump(const FInputActionValue& inputvalue);
+	void InputStopJumping(const FInputActionValue& inputvalue);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Character")
